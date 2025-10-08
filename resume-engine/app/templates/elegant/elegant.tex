@@ -1,0 +1,178 @@
+\documentclass[letterpaper,9.8pt]{article}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{fontawesome}
+\definecolor{accent}{RGB}{0, 0, 0} % Elegant's cyan accent color
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.7in}
+\addtolength{\textheight}{1.35in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+  \vspace{-10pt}\scshape\raggedright\large
+}{}{0em}{}[\color{accent}\titlerule\vspace{2pt}] % Using the accent color for the rule
+
+\titlespacing*{\section}{0pt}{18pt}{2pt}
+
+% --- SHARED CUSTOM COMMANDS FOR CONSISTENT SPACING ---
+\newcommand{\resumeItem}[1]{\item\small{{#1 \vspace{-3pt}}}}
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-1pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeCertification}[3]{
+  \vspace{-1pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textit{\small #3} \\
+      \textit{\small#2} & \\
+    \end{tabular*}\vspace{2pt}
+}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.1in, itemsep=3pt, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, label=$\bullet$]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-6pt}}
+% --- END OF CUSTOM COMMANDS ---
+
+
+\begin{document}
+
+%----------HEADING----------
+\BLOCK{ if resume_data.personal_info.full_name }
+\begin{center}
+    {\Huge \textbf{\VAR{ resume_data.personal_info.full_name | escape_tex }}} \\ \vspace{2pt}
+    \small
+    \BLOCK{ if resume_data.personal_info.phone }+91-\VAR{ resume_data.personal_info.phone | escape_tex }\BLOCK{ endif }
+    \BLOCK{ if resume_data.personal_info.email }\BLOCK{ if resume_data.personal_info.phone } $|$ \BLOCK{ endif }\href{mailto:\VAR{ resume_data.personal_info.email }}{\underline{\VAR{ resume_data.personal_info.email | escape_tex }}}\BLOCK{ endif }
+    \BLOCK{ if resume_data.personal_info.address }\BLOCK{ if resume_data.personal_info.email or resume_data.personal_info.phone } $|$ \BLOCK{ endif }\VAR{ resume_data.personal_info.address | escape_tex }\BLOCK{ endif }
+    \BLOCK{ if resume_data.personal_info.linkedin_handle }\BLOCK{ if resume_data.personal_info.email or resume_data.personal_info.phone or resume_data.personal_info.address } $|$ \BLOCK{ endif }\href{https://linkedin.com/in/\VAR{resume_data.personal_info.linkedin_handle}}{\faLinkedinSquare\ \underline{LinkedIn}}\BLOCK{ endif }
+    \BLOCK{ if resume_data.personal_info.github_handle }\BLOCK{ if resume_data.personal_info.email or resume_data.personal_info.phone or resume_data.personal_info.address or resume_data.personal_info.linkedin_handle } $|$ \BLOCK{ endif }\href{https://github.com/\VAR{resume_data.personal_info.github_handle}}{\faGithub\ \underline{GitHub}}\BLOCK{ endif }
+    \BLOCK{ if resume_data.personal_info.portfolio_url }\BLOCK{ if resume_data.personal_info.email or resume_data.personal_info.phone or resume_data.personal_info.address or resume_data.personal_info.linkedin_handle or resume_data.personal_info.github_handle } $|$ \BLOCK{ endif }\href{\VAR{resume_data.personal_info.portfolio_url}}{\faGlobe\ \underline{Portfolio}}\BLOCK{ endif }
+\end{center}
+\BLOCK{ endif }
+
+%-----------EDUCATION-----------
+\BLOCK{ if resume_data.education and resume_data.education|selectattr('institution')|list|length > 0 }
+\section*{Education}
+  \resumeSubHeadingListStart
+    \BLOCK{ for edu in resume_data.education }
+        \BLOCK{ if edu.institution }
+        \resumeSubheading
+          {\VAR{ edu.institution | escape_tex }}
+          {\VAR{ edu.start_year | escape_tex } -- \VAR{ edu.end_year | escape_tex }}
+          {\VAR{ edu.degree | escape_tex }}
+          {\BLOCK{ if edu.gpa }GPA: \VAR{ edu.gpa | escape_tex }\BLOCK{ endif }}
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+  \resumeSubHeadingListEnd
+\BLOCK{ endif }
+
+%-----------EXPERIENCE-----------
+\BLOCK{ if resume_data.work_experience and resume_data.work_experience|selectattr('company_name')|list|length > 0 }
+\section*{Experience}
+  \resumeSubHeadingListStart
+    \BLOCK{ for job in resume_data.work_experience }
+      \BLOCK{ if job.company_name }
+      \resumeSubheading
+        {\VAR{ job.job_title | escape_tex }}{\VAR{ job.location | escape_tex }}
+        {\VAR{ job.company_name | escape_tex }}{\VAR{ job.start_date | escape_tex } -- \VAR{ job.end_date | escape_tex }}
+        \BLOCK{ if job.description_points }
+        \resumeItemListStart
+            \BLOCK{ for point in job.description_points }
+                \resumeItem{\VAR{ point | escape_tex }}
+            \BLOCK{ endfor }
+        \resumeItemListEnd
+        \BLOCK{ endif }
+      \BLOCK{ endif }
+    \BLOCK{ endfor }
+  \resumeSubHeadingListEnd
+\BLOCK{ endif }
+
+%-----------PROJECTS-----------
+\BLOCK{ if resume_data.projects and resume_data.projects|selectattr('project_name')|list|length > 0 }
+\section*{Projects}
+    \resumeSubHeadingListStart
+    \BLOCK{ for proj in resume_data.projects }
+      \BLOCK{ if proj.project_name }
+      \resumeProjectHeading
+          {\textbf{\VAR{ proj.project_name | escape_tex }} $|$ \emph{\VAR{ proj.tech_stack | escape_tex }}}{\VAR{ proj.start_date | escape_tex } -- \VAR{ proj.end_date | escape_tex }}
+          \BLOCK{ if proj.description_points }
+          \resumeItemListStart
+            \BLOCK{ for point in proj.description_points }
+                \resumeItem{\VAR{ point | escape_tex }}
+            \BLOCK{ endfor }
+          \resumeItemListEnd
+          \BLOCK{ endif }
+      \BLOCK{ endif }
+    \BLOCK{ endfor }
+    \resumeSubHeadingListEnd
+\BLOCK{ endif }
+
+%-----------TECHNICAL SKILLS-----------
+\BLOCK{ if resume_data.skills and resume_data.skills|selectattr('name')|list|length > 0 }
+\section*{Technical Skills}
+ \begin{tabularx}{0.97\textwidth}{@{} >{\bfseries}l X @{}}
+    \BLOCK{ for skill in resume_data.skills }
+        \BLOCK{ if skill.name }
+        \VAR{ skill.name | escape_tex }:~ & \VAR{ skill.value | escape_tex } \\
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+ \end{tabularx}
+\BLOCK{ endif }
+
+%-----------ACHIEVEMENTS-----------
+\BLOCK{ if resume_data.achievements and resume_data.achievements|selectattr('description')|list|length > 0 }
+\section*{Achievements}
+\resumeItemListStart
+    \BLOCK{ for ach in resume_data.achievements }
+        \BLOCK{ if ach.description }
+            \resumeItem{\VAR{ ach.description | escape_tex }}
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+\resumeItemListEnd
+\BLOCK{ endif }
+
+%-----------CERTIFICATIONS-----------
+\BLOCK{ if resume_data.certifications and resume_data.certifications|selectattr('name')|list|length > 0 }
+\section*{Certifications}
+\resumeSubHeadingListStart
+    \BLOCK{ for cert in resume_data.certifications }
+        \BLOCK{ if cert.name }
+            \resumeCertification
+              {\VAR{ cert.name | escape_tex }}
+              {\VAR{ cert.issuer | escape_tex }}
+              {\VAR{ cert.date | escape_tex }}
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+\resumeSubHeadingListEnd
+\BLOCK{ endif }
+
+\end{document}

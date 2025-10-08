@@ -1,0 +1,161 @@
+\documentclass[letterpaper,10pt,oneside]{article}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{multicol} % <-- ADD THIS LINE
+\renewcommand{\familydefault}{\sfdefault}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+\pagestyle{empty}
+
+\titleformat{\section}{\bfseries\scshape\raggedright\large}{}{0em}{}[\hrule]
+\titlespacing*{\section}{0pt}{18pt}{12pt}
+% --- SHARED CUSTOM COMMANDS FOR CONSISTENT SPACING ---
+\newcommand{\resumeItem}[1]{\item\small{{#1 \vspace{-3pt}}}}
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-1pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeCertification}[3]{
+  \vspace{-1pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textit{\small #3} \\
+      \textit{\small#2} & \\
+    \end{tabular*}\vspace{2pt}
+}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.1in, itemsep=3pt, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, label=$\bullet$]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-6pt}}
+\begin{document}
+
+%----------HEADING----------
+\BLOCK{ if resume_data.personal_info.full_name }
+\begin{center}
+    {\Huge \bfseries \VAR{ resume_data.personal_info.full_name | escape_tex }}
+    \vspace{4pt} \\
+    \small
+    \BLOCK{ if resume_data.personal_info.email }\href{mailto:\VAR{ resume_data.personal_info.email }}{\underline{\VAR{ resume_data.personal_info.email | escape_tex }}}\BLOCK{ endif }
+    \BLOCK{ if resume_data.personal_info.phone }\BLOCK{ if resume_data.personal_info.email } $|$ \BLOCK{ endif }\VAR{ resume_data.personal_info.phone | escape_tex }\BLOCK{ endif }
+    \BLOCK{ if resume_data.personal_info.address }\BLOCK{ if resume_data.personal_info.email or resume_data.personal_info.phone } $|$ \BLOCK{ endif }\VAR{ resume_data.personal_info.address | escape_tex }\BLOCK{ endif }
+    \BLOCK{ if resume_data.personal_info.linkedin_handle }\BLOCK{ if resume_data.personal_info.email or resume_data.personal_info.phone or resume_data.personal_info.address } $|$ \BLOCK{ endif }\href{https://linkedin.com/in/\VAR{resume_data.personal_info.linkedin_handle}}{\underline{LinkedIn}}\BLOCK{ endif }
+    \BLOCK{ if resume_data.personal_info.github_handle }\BLOCK{ if resume_data.personal_info.email or resume_data.personal_info.phone or resume_data.personal_info.address or resume_data.personal_info.linkedin_handle } $|$ \BLOCK{ endif }\href{https://github.com/\VAR{resume_data.personal_info.github_handle}}{\underline{GitHub}}\BLOCK{ endif }
+    \BLOCK{ if resume_data.personal_info.portfolio_url }\BLOCK{ if resume_data.personal_info.email or resume_data.personal_info.phone or resume_data.personal_info.address or resume_data.personal_info.linkedin_handle or resume_data.personal_info.github_handle } $|$ \BLOCK{ endif }\href{\VAR{resume_data.personal_info.portfolio_url}}{\underline{Portfolio}}\BLOCK{ endif }
+\end{center}
+\BLOCK{ endif }
+
+%-----------EDUCATION-----------
+\BLOCK{ if resume_data.education and resume_data.education|selectattr('institution')|list|length > 0 }
+\section*{Education}
+\begin{itemize}[leftmargin=0pt, itemsep=4pt, label={}]
+    \BLOCK{ for edu in resume_data.education }
+        \BLOCK{ if edu.institution }
+        \item
+        \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+            \textbf{\VAR{ edu.degree | escape_tex }} & \VAR{ edu.start_year | escape_tex } -- \VAR{ edu.end_year | escape_tex } \\
+            \textit{\small \VAR{ edu.institution | escape_tex }} & \BLOCK{ if edu.gpa }\textit{\small GPA: \VAR{ edu.gpa | escape_tex }}\BLOCK{ endif }
+        \end{tabular*}
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+
+%-----------EXPERIENCE-----------
+\BLOCK{ if resume_data.work_experience and resume_data.work_experience|selectattr('company_name')|list|length > 0 }
+\section*{Experience}
+\begin{itemize}[leftmargin=0pt, itemsep=4pt, label={}]
+    \BLOCK{ for job in resume_data.work_experience }
+        \BLOCK{ if job.company_name }
+        \item
+        \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+            \textbf{\VAR{ job.job_title | escape_tex }} & \VAR{ job.start_date | escape_tex } -- \VAR{ job.end_date | escape_tex } \\
+            \textit{\small \VAR{ job.company_name | escape_tex }} & \textit{\small \VAR{ job.location | escape_tex }}
+        \end{tabular*}
+        \BLOCK{ if job.description_points }
+        \begin{itemize}[leftmargin=0.2in, itemsep=0pt, label={-}]
+            \BLOCK{ for point in job.description_points }
+                \item\small \VAR{ point | safe_tex }
+            \BLOCK{ endfor }
+        \end{itemize}
+        \BLOCK{ endif }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+
+%-----------PROJECTS-----------
+\BLOCK{ if resume_data.projects and resume_data.projects|selectattr('project_name')|list|length > 0 }
+\section*{Projects}
+\begin{itemize}[leftmargin=0pt, itemsep=4pt, label={}]
+    \BLOCK{ for proj in resume_data.projects }
+      \BLOCK{ if proj.project_name }
+      \item
+      \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+        \textbf{\VAR{ proj.project_name | escape_tex }} & \VAR{ proj.start_date | escape_tex } -- \VAR{ proj.end_date | escape_tex } \\
+        \textit{\small Tech Stack: \VAR{ proj.tech_stack | escape_tex }} & \\
+      \end{tabular*}
+      \BLOCK{ if proj.description_points }
+      \begin{itemize}[leftmargin=0.2in, itemsep=0pt, label={-}]
+        \BLOCK{ for point in proj.description_points }
+            \item\small \VAR{ point | safe_tex }
+        \BLOCK{ endfor }
+      \end{itemize}
+      \BLOCK{ endif }
+      \BLOCK{ endif }
+    \BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+
+%-----------SKILLS & OTHERS-----------
+% Using a two-column layout for the final sections
+\begin{multicols}{2}
+\BLOCK{ if resume_data.skills and resume_data.skills|selectattr('name')|list|length > 0 }
+\section*{Technical Skills}
+\begin{itemize}[leftmargin=0pt, itemsep=1pt, label={}]
+    \BLOCK{ for skill in resume_data.skills }
+        \BLOCK{ if skill.name }
+        \item \small \textbf{\VAR{ skill.name | escape_tex }}: \VAR{ skill.value | escape_tex }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+
+\BLOCK{ if resume_data.achievements and resume_data.achievements|selectattr('description')|list|length > 0 }
+\section*{Achievements}
+\begin{itemize}[leftmargin=0.2in, itemsep=0pt, label={-}]
+    \BLOCK{ for ach in resume_data.achievements }
+        \BLOCK{ if ach.description }
+            \item\small \VAR{ ach.description | escape_tex }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+
+\BLOCK{ if resume_data.certifications and resume_data.certifications|selectattr('name')|list|length > 0 }
+\section*{Certifications}
+\begin{itemize}[leftmargin=0pt, itemsep=1pt, label={}]
+    \BLOCK{ for cert in resume_data.certifications }
+        \BLOCK{ if cert.name }
+        \item \small \textbf{\VAR{ cert.name | escape_tex }} (\VAR{ cert.issuer | escape_tex }, \VAR{ cert.date | escape_tex })
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+\end{multicols}
+
+\end{document}

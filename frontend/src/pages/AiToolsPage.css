@@ -1,0 +1,139 @@
+/* Inherits global styles from index.css, including .bento-item */
+
+.ai-tools-title {
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+.ai-tools-container {
+    padding: 4rem 0;
+  
+    min-height: calc(100vh - 80px);
+    background-color: var(--dark-bg);
+}
+
+/* This is a special class from the homepage, let's reuse it here */
+.animated-gradient {
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-cyan));
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-animation 4s ease infinite;
+}
+
+@keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.ai-tools-subtitle {
+    text-align: center;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto 3rem;
+}
+
+/* ... (keep the .ai-tools-title, .animated-gradient, and .ai-tools-subtitle styles) ... */
+
+.tools-bento-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+    gap: 1.5rem;
+    margin-bottom: 5rem;
+}
+
+.tool-card {
+    min-height: 280px; /* A good height for the new design */
+    cursor: pointer;
+    padding: 2rem;
+}
+
+/* Styles for the content *inside* the bento cards */
+.tool-card .bento-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align content to the left */
+    justify-content: space-between; /* Pushes the CTA to the bottom */
+    text-align: left;
+    height: 100%;
+}
+
+.tool-icon {
+    font-size: 2.5rem; /* Slightly smaller icon */
+    color: var(--accent-purple); /* Using purple for a new look */
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 0 12px var(--accent-purple)); /* Glowing icon effect */
+}
+
+.tool-card h3 {
+    text-shadow: none; /* Remove previous shadow */
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+    color: var(--text-primary);
+}
+
+.tool-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.tool-cta {
+    font-weight: 600;
+    color: var(--accent-cyan);
+    transition: transform 0.3s ease;
+}
+
+.tool-card:hover .tool-cta {
+    transform: translateX(5px);
+}
+
+/* === How It Works Timeline === */
+.how-it-works-timeline {
+    margin: 6rem 0;
+}
+
+.timeline {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+
+/* The connecting line */
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 15px; /* Vertically center with the dots */
+    left: 5%;
+    width: 90%;
+    height: 2px;
+    background-color: var(--border-color);
+}
+
+.timeline-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 30%;
+    position: relative;
+}
+
+.timeline-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--accent-cyan);
+    border: 3px solid var(--dark-bg);
+    box-shadow: 0 0 15px var(--glow-color);
+    z-index: 1;
+}
+
+.timeline-content {
+    margin-top: 1.5rem;
+}
+
+.timeline-content h3 {
+    margin-bottom: 0.5rem;
+}

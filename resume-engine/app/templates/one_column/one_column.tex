@@ -1,0 +1,165 @@
+\documentclass[letterpaper,10pt,oneside]{article}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{times} % Use Times New Roman font
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+\pagestyle{empty}
+
+% --- SECTION FORMATTING ---
+\titleformat{\section}{\vspace{6pt}\bfseries\large\raggedright}{}{0em}{}
+\titlespacing*{\section}{0pt}{4pt}{2pt}
+
+% --- CUSTOM COMMANDS ---
+\newcommand{\resumeEntry}[3]{
+    \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+        \textbf{#1} & \textit{\small #3} \\
+    \end{tabular*}
+    \\ \hspace{0.1in} \textit{#2}
+}
+
+\newcommand{\resumeDescription}[1]{
+    \begin{itemize}[leftmargin=0.2in, itemsep=0pt, label={$\circ$}]
+        \item\small #1
+    \end{itemize}
+}
+
+\begin{document}
+
+%----------HEADING----------
+\BLOCK{ if resume_data.personal_info.full_name }
+\begin{center}
+    {\Huge \bfseries \VAR{ resume_data.personal_info.full_name | escape_tex }}
+    \vspace{4pt} \\
+    \small \VAR{ resume_data.personal_info.address | escape_tex } \\
+    \small \href{mailto:\VAR{ resume_data.personal_info.email }}{\VAR{ resume_data.personal_info.email | escape_tex }} $|$ \VAR{ resume_data.personal_info.phone | escape_tex } \\
+    % --- LINKS ADDED ON A NEW LINE ---
+    \small
+    \BLOCK{ if resume_data.personal_info.linkedin_handle }
+        \href{https://linkedin.com/in/\VAR{resume_data.personal_info.linkedin_handle}}{\underline{LinkedIn}}
+    \BLOCK{ endif }
+    \BLOCK{ if resume_data.personal_info.github_handle }
+        \BLOCK{ if resume_data.personal_info.linkedin_handle } $|$ \BLOCK{ endif }
+        \href{https://github.com/\VAR{resume_data.personal_info.github_handle}}{\underline{GitHub}}
+    \BLOCK{ endif }
+    \BLOCK{ if resume_data.personal_info.portfolio_url }
+        \BLOCK{ if resume_data.personal_info.linkedin_handle or resume_data.personal_info.github_handle } $|$ \BLOCK{ endif }
+        \href{\VAR{resume_data.personal_info.portfolio_url}}{\underline{Portfolio}}
+    \BLOCK{ endif }
+\end{center}
+\BLOCK{ endif }
+
+%-----------EDUCATION-----------
+\BLOCK{ if resume_data.education and resume_data.education|selectattr('institution')|list|length > 0 }
+\section*{Education}
+\begin{itemize}[leftmargin=0pt, itemsep=4pt, label={}]
+    \BLOCK{ for edu in resume_data.education }
+        \BLOCK{ if edu.institution }
+        \item
+        \resumeEntry
+            {\VAR{ edu.institution | escape_tex }}
+            {\VAR{ edu.degree | escape_tex }\BLOCK{ if edu.gpa }, GPA: \VAR{ edu.gpa | escape_tex }\BLOCK{ endif }}
+            {\VAR{ edu.start_year | escape_tex } -- \VAR{ edu.end_year | escape_tex }}
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+
+%-----------EXPERIENCE-----------
+\BLOCK{ if resume_data.work_experience and resume_data.work_experience|selectattr('company_name')|list|length > 0 }
+\section*{Experience}
+\begin{itemize}[leftmargin=0pt, itemsep=4pt, label={}]
+    \BLOCK{ for job in resume_data.work_experience }
+        \BLOCK{ if job.company_name }
+        \item
+        \resumeEntry
+            {\VAR{ job.company_name | escape_tex }}
+            {\VAR{ job.job_title | escape_tex }, \VAR{ job.location | escape_tex }}
+            {\VAR{ job.start_date | escape_tex } -- \VAR{ job.end_date | escape_tex }}
+        \BLOCK{ if job.description_points }
+        \resumeDescription{
+            \begin{itemize}[leftmargin=0.2in, itemsep=0pt, label={$\circ$}]
+                \BLOCK{ for point in job.description_points }
+                    \item\small \VAR{ point | safe_tex }
+                \BLOCK{ endfor }
+            \end{itemize}
+        }
+        \BLOCK{ endif }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+
+%-----------PROJECTS-----------
+\BLOCK{ if resume_data.projects and resume_data.projects|selectattr('project_name')|list|length > 0 }
+\section*{Projects}
+\begin{itemize}[leftmargin=0pt, itemsep=4pt, label={}]
+    \BLOCK{ for proj in resume_data.projects }
+      \BLOCK{ if proj.project_name }
+      \item
+      \resumeEntry
+        {\VAR{ proj.project_name | escape_tex }}
+        {\textit{Tech Stack:} \VAR{ proj.tech_stack | escape_tex }}
+        {\VAR{ proj.start_date | escape_tex } -- \VAR{ proj.end_date | escape_tex }}
+      \BLOCK{ if proj.description_points }
+      \resumeDescription{
+          \begin{itemize}[leftmargin=0.2in, itemsep=0pt, label={$\circ$}]
+            \BLOCK{ for point in proj.description_points }
+                \item\small \VAR{ point | safe_tex }
+            \BLOCK{ endfor }
+          \end{itemize}
+      }
+      \BLOCK{ endif }
+      \BLOCK{ endif }
+    \BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+
+%-----------TECHNICAL SKILLS-----------
+\BLOCK{ if resume_data.skills and resume_data.skills|selectattr('name')|list|length > 0 }
+\section*{Technical Skills}
+\begin{itemize}[leftmargin=0pt, itemsep=1pt, label={}]
+    \BLOCK{ for skill in resume_data.skills }
+        \BLOCK{ if skill.name }
+        \item \small \textbf{\VAR{ skill.name | escape_tex }}: \VAR{ skill.value | escape_tex }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+
+%-----------ACHIEVEMENTS-----------
+\BLOCK{ if resume_data.achievements and resume_data.achievements|selectattr('description')|list|length > 0 }
+\section*{Achievements}
+\begin{itemize}[leftmargin=0.2in, itemsep=0pt, label={$\circ$}]
+    \BLOCK{ for ach in resume_data.achievements }
+        \BLOCK{ if ach.description }
+            \item\small \VAR{ ach.description | escape_tex }
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+
+%-----------CERTIFICATIONS-----------
+\BLOCK{ if resume_data.certifications and resume_data.certifications|selectattr('name')|list|length > 0 }
+\section*{Certifications}
+\begin{itemize}[leftmargin=0pt, itemsep=4pt, label={}]
+    \BLOCK{ for cert in resume_data.certifications }
+        \BLOCK{ if cert.name }
+        \item
+        \resumeEntry
+            {\VAR{ cert.name | escape_tex }}
+            {\VAR{ cert.issuer | escape_tex }}
+            {\VAR{ cert.date | escape_tex }}
+        \BLOCK{ endif }
+    \BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+
+\end{document}
