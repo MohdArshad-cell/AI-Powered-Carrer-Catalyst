@@ -13,16 +13,17 @@ public class WebConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
-                        // Add the URL of your deployed React frontend here
+                // Changed from "/api/**" to "/**" to cover ALL endpoints (including auth)
+                registry.addMapping("/**") 
                         .allowedOrigins(
-                            "https://career-catalyst-frontend.onrender.com", // Example production URL
-                            "http://localhost:3000", // For local development
-                            "http://localhost:5173"  // For local Vite development
-                        ) 
+                            "https://career-catalyst-frontend.onrender.com",
+                            "http://localhost:3000",
+                            "http://localhost:5173"
+                        )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true);
+                        .allowCredentials(true)
+                        .maxAge(3600); // Cache the CORS response for 1 hour to reduce traffic
             }
         };
     }

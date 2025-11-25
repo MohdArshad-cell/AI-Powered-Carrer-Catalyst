@@ -7,7 +7,7 @@ import Footer from '../components/Footer';
 import ParticleBackground from '../components/ParticleBackground';
 import './AiTailorPage.css'; // Reuse the same CSS for a consistent look
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 const CoverLetterGeneratorPage: React.FC = () => {
     // State variables adapted for the cover letter generator

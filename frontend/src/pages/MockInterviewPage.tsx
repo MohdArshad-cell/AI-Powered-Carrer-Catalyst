@@ -11,7 +11,7 @@ interface InterviewItem {
   question: string;
   answer: string;
 }
-
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 const MockInterviewPage: React.FC = () => {
   const [jobDescription, setJobDescription] = useState('');
   const [questions, setQuestions] = useState<InterviewItem[]>([]); // Updated type
@@ -37,9 +37,11 @@ const MockInterviewPage: React.FC = () => {
     setVisibleAnswers({}); // Reset expanded answers
 
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/interview/generate', jobDescription, {
-        headers: { 'Content-Type': 'text/plain' }
-      });
+      // ✅ CORRECT (Dynamic)
+const response = await axios.post(`${API_BASE_URL}/api/v1/interview/generate`, jobDescription, {
+  headers: { 'Content-Type': 'text/plain' }
+});
+    
       
       // Parse the JSON string returned by Python
       const parsedQuestions = JSON.parse(response.data.content);

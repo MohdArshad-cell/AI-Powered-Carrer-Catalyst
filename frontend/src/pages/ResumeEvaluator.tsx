@@ -6,7 +6,7 @@ import Footer from '../components/Footer';       // Assuming you have these comp
 import ParticleBackground from '../components/ParticleBackground'; // Assuming you have these components
 import './AiTailorPage.css'; // You can reuse the same CSS file
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 const AtsEvaluatorPage: React.FC = () => {
     // Adapted state variables
