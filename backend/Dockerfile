@@ -3,27 +3,32 @@ FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
-# Build the JAR file
+# Build the JAR file, skipping tests to save time
 RUN mvn clean package -DskipTests
 
 # --- Stage 2: Create the Runtime Environment ---
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
-# 1. Install Python and Pip
-RUN apt-get update && apt-get install -y python3 python3-pip
+# 1. Install Python, Pip, and LaTeX (Required for PDF generation)
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    texlive-latex-base \
+    texlive-latex-extra \
+    texlive-fonts-recommended \
+    && rm -rf /var/lib/apt/lists/*
 
 # 2. Copy the built JAR file
 COPY --from=build /app/target/*.jar app.jar
 
-# 3. Copy AI Scripts (Tailor, Evaluator)
+# 3. Copy AI Scripts
 COPY src/main/resources/scripts /app/scripts
 COPY src/main/resources/scripts1 /app/scripts1
 COPY src/main/resources/scripts2 /app/scripts2
 COPY src/main/resources/scripts3 /app/scripts3
 
-# 4. Copy the Resume Engine (PDF Generator) & Startup Script
-# This assumes you moved the folder into 'backend' as instructed in Step 1
+# 4. Copy the Resume Engine & Startup Script
 COPY resume-engine /app/resume-engine
 COPY start.sh /app/start.sh
 
@@ -34,12 +39,10 @@ RUN pip3 install --break-system-packages google-generativeai pdfplumber python-d
 # Install Resume Engine dependencies
 RUN pip3 install --break-system-packages -r /app/resume-engine/requirements.txt
 
-# 6. Make the startup script executable
+# 6. Permissions & Env
 RUN chmod +x /app/start.sh
-
-# 7. Set Environment Variables
 ENV PORT=8080
 EXPOSE 8080 8000
 
-# 8. Start Both Services
+# 7. Start Both Services
 ENTRYPOINT ["/app/start.sh"]

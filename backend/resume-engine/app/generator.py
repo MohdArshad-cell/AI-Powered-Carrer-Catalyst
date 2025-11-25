@@ -44,12 +44,14 @@ class ResumeGenerator:
             autoescape=False,
         )
         self.env.filters['escape_tex'] = escape_latex
-        self.env.filters['safe_tex'] = safe_latex # <-- ADD THIS LINE to register the filter
+        self.env.filters['safe_tex'] = safe_latex
         
         self.temp_dir = os.path.join(tempfile.gettempdir(), "resume_generator")
         os.makedirs(self.temp_dir, exist_ok=True)
         
-        self.pdflatex_path = r"D:\MIKTex\miktex\bin\x64\pdflatex.exe"
+        # FIX: Use "pdflatex" directly. This assumes it is installed in the system PATH
+        # (which our new Dockerfile does via apt-get install texlive...)
+        self.pdflatex_path = "pdflatex"
 
     def generate(self, template_name: str, data: dict):
         session_id = str(uuid.uuid4())
@@ -66,6 +68,7 @@ class ResumeGenerator:
 
         cmd = [self.pdflatex_path, "resume.tex"]
         try:
+            # Run twice to resolve references/page numbers if needed
             subprocess.run(cmd, check=True, capture_output=True, text=True, cwd=output_dir)
             subprocess.run(cmd, check=True, capture_output=True, text=True, cwd=output_dir)
         except subprocess.CalledProcessError as e:
