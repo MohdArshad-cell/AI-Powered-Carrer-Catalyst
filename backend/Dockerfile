@@ -27,7 +27,7 @@ COPY src/main/resources/scripts2 /app/scripts2
 COPY src/main/resources/scripts3 /app/scripts3
 
 # 4. Install Python Requirements
-RUN pip3 install --break-system-packages -r /app/scripts/requirements.txt
+
 RUN pip3 install --break-system-packages google-generativeai pdfplumber python-docx
 
 # 5. Environment
