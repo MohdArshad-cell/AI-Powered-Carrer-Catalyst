@@ -13,17 +13,19 @@ public class WebConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                // Changed from "/api/**" to "/**" to cover ALL endpoints (including auth)
-                registry.addMapping("/**") 
+                registry.addMapping("/**") // Allow ALL endpoints
                         .allowedOrigins(
-                            "https://career-catalyst-frontend.onrender.com",
-                            "http://localhost:3000",
+                            // ADD YOUR LIVE VERCEL URL HERE (No trailing slash)
+                            "https://ai-powered-carrer-catalyst.vercel.app",
+                            
+                            // Keep these for local testing
+                            "http://localhost:3000", 
                             "http://localhost:5173"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true)
-                        .maxAge(3600); // Cache the CORS response for 1 hour to reduce traffic
+                        .maxAge(3600);
             }
         };
     }
