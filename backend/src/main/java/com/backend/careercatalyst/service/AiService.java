@@ -43,6 +43,14 @@ public class AiService {
     }
 
     /**
+     * Public method for AI Mock Interview (Question Generator).
+     */
+    public String getInterviewQuestions(String jobDescription) {
+        // We reuse the existing logic but point to the new script
+        return runPythonScript("scripts3/interview_generator.py", jobDescription);
+    }
+
+    /**
      * Private helper to run Python scripts. This version is corrected to prevent deadlocks.
      */
     private String runPythonScript(String scriptPath, String inputData) {

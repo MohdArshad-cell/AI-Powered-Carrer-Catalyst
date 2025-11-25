@@ -5,6 +5,7 @@ import com.backend.careercatalyst.dto.CoverLetterResponse; // <-- NEW
 import com.backend.careercatalyst.dto.EvaluationRequest;
 import com.backend.careercatalyst.dto.EvaluationResponse;
 import com.backend.careercatalyst.dto.GenerateRequest;
+import com.backend.careercatalyst.dto.InterviewResponse;
 import com.backend.careercatalyst.dto.TailorRequest; // <-- NEW
 import com.backend.careercatalyst.dto.TailorResponse; // <-- NEW
 import com.backend.careercatalyst.service.AiService; // <-- NEW
@@ -19,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers; // <-- NEW
-
+import com.backend.careercatalyst.dto.InterviewResponse;
 import java.util.Map;
 
 @RestController
@@ -121,6 +122,19 @@ public class ApiController {
                     e.printStackTrace();
                     CoverLetterResponse errorResponse = new CoverLetterResponse("Error: " + e.getMessage());
                     return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse));
+                });
+    }
+
+    // --- NEW: AI MOCK INTERVIEW ENDPOINT ---
+    @PostMapping("/interview/generate")
+    public Mono<ResponseEntity<InterviewResponse>> generateInterviewQuestions(@RequestBody String jobDescription) {
+        return Mono.fromCallable(() -> aiService.getInterviewQuestions(jobDescription))
+                .subscribeOn(Schedulers.boundedElastic())
+                .map(jsonContent -> ResponseEntity.ok(new InterviewResponse(jsonContent)))
+                .onErrorResume(e -> {
+                    e.printStackTrace();
+                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new InterviewResponse("{\"error\": \"" + e.getMessage() + "\"}")));
                 });
     }
     /**
