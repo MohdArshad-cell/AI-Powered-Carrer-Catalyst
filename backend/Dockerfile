@@ -35,7 +35,8 @@ COPY resume-engine /app/resume-engine
 COPY start.sh /app/start.sh
 
 # 5. Install Dependencies
-RUN pip3 install --break-system-packages google-generativeai pdfplumber python-docx python-dotenv
+# 5. Install Dependencies
+RUN pip3 install --break-system-packages google-generativeai pdfplumber python-docx python-dotenv pyhumps
 RUN pip3 install --break-system-packages -r /app/resume-engine/requirements.txt
 
 # 6. CRITICAL FIX: Convert start.sh to Unix format and make executable
